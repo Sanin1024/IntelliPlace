@@ -12,6 +12,7 @@ function createApp(db) {
     res.json({ status: 'ok', db: 'ok', sqlite: v });
   });
   app.use('/api/auth', require('./routes/auth')(db));
+  app.use('/api/student', require('./routes/student')(db));
   app.get('/api/admin/ping', requireAuth(db), requireRole('admin'), (req, res) => res.json({ ok: true }));
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));
   app.use((err, req, res, next) => res.status(err.status || 500).json({ error: 'Server error' }));
