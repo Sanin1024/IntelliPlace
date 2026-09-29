@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const { requireAuth, requireRole } = require('./auth');
 function createApp(db) {
   const app = express();
   app.use(helmet());
@@ -10,6 +11,8 @@ function createApp(db) {
     const { v } = db.prepare('select sqlite_version() v').get();
     res.json({ status: 'ok', db: 'ok', sqlite: v });
   });
+  app.use('/api/auth', require('./routes/auth')(db));
+  app.get('/api/admin/ping', requireAuth(db), requireRole('admin'), (req, res) => res.json({ ok: true }));
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));
   app.use((err, req, res, next) => res.status(err.status || 500).json({ error: 'Server error' }));
   return app;
