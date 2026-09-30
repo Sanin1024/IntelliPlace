@@ -124,5 +124,15 @@ module.exports = [
       PRIMARY KEY (mock_id, question_id)
     );
     ALTER TABLE attempts ADD COLUMN mock_id INTEGER REFERENCES mock_tests(id);
-    CREATE UNIQUE INDEX one_active_mock ON attempts(user_id) WHERE kind = 'mock' AND submitted_at IS NULL;` }
+    CREATE UNIQUE INDEX one_active_mock ON attempts(user_id) WHERE kind = 'mock' AND submitted_at IS NULL;` },
+  { id: 7, name: 'resume_builder', sql: `
+    CREATE TABLE resumes (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      headline TEXT, summary TEXT,
+      education TEXT NOT NULL DEFAULT '[]',
+      projects TEXT NOT NULL DEFAULT '[]',
+      experience TEXT NOT NULL DEFAULT '[]',
+      certifications TEXT NOT NULL DEFAULT '[]',
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );` }
 ];
