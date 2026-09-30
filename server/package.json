@@ -10,7 +10,8 @@
     "test": "node --test",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "seed": "node src/seed.js && node src/practiceBank.js && node src/mockBank.js"
+    "seed": "node src/seed.js && node src/practiceBank.js && node src/mockBank.js",
+    "bootstrap-admin": "node src/bootstrap-admin.js"
   },
   "keywords": [],
   "author": "",

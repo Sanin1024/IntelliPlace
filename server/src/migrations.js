@@ -134,5 +134,9 @@ module.exports = [
       experience TEXT NOT NULL DEFAULT '[]',
       certifications TEXT NOT NULL DEFAULT '[]',
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );` }
+    );` },
+  { id: 8, name: 'account_controls', sql: `
+    ALTER TABLE users ADD COLUMN disabled_at INTEGER;
+    ALTER TABLE users ADD COLUMN failed_logins INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE users ADD COLUMN locked_until INTEGER;` }
 ];

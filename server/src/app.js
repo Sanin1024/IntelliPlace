@@ -21,6 +21,7 @@ function createApp(db) {
   app.use('/api/analytics', requireAuth(db), require('./routes/analytics')(db));
   app.use('/api/resume', requireAuth(db), require('./routes/resume')(db));
   app.use('/api/recommendations', requireAuth(db), require('./routes/recommendations')(db));
+  app.use('/api/admin/users', requireAuth(db), requireRole('admin'), require('./routes/users')(db));
   app.get('/api/admin/ping', requireAuth(db), requireRole('admin'), (req, res) => res.json({ ok: true }));
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));
   app.use((err, req, res, next) => res.status(err.status || 500).json({ error: 'Server error' }));

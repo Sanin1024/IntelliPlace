@@ -25,9 +25,9 @@ function requireAuth(db) {
     const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
     if (!m) return res.status(401).json({ error: 'Authentication required' });
     const th = sha(m[1]);
-    const row = db.prepare(`select u.id, u.name, u.email, u.role, s.expires_at
+    const row = db.prepare(`select u.id, u.name, u.email, u.role, u.disabled_at, s.expires_at
       from sessions s join users u on u.id = s.user_id where s.token_hash = ?`).get(th);
-    if (!row || row.expires_at < Date.now()) return res.status(401).json({ error: 'Invalid or expired session' });
+    if (!row || row.disabled_at || row.expires_at < Date.now()) return res.status(401).json({ error: 'Invalid or expired session' });
     req.user = { id: row.id, name: row.name, email: row.email, role: row.role };
     req.tokenHash = th;
     next();
