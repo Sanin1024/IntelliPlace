@@ -5,3 +5,7 @@ dist
 *.db-wal
 *.db-shm
 .freebuff
+
+.venv/
+__pycache__/
+*.pyc
