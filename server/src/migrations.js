@@ -62,5 +62,29 @@ module.exports = [
     CREATE TRIGGER audit_no_update BEFORE UPDATE ON audit_log
       BEGIN SELECT RAISE(ABORT, 'audit_log is append-only'); END;
     CREATE TRIGGER audit_no_delete BEFORE DELETE ON audit_log
-      BEGIN SELECT RAISE(ABORT, 'audit_log is append-only'); END;` }
+      BEGIN SELECT RAISE(ABORT, 'audit_log is append-only'); END;` },
+  { id: 4, name: 'drives_and_applications', sql: `
+    CREATE TABLE drives (
+      id INTEGER PRIMARY KEY,
+      company TEXT NOT NULL,
+      role TEXT NOT NULL,
+      description TEXT,
+      min_cgpa REAL,
+      allowed_departments TEXT NOT NULL DEFAULT '[]',
+      min_year INTEGER,
+      max_year INTEGER,
+      required_level TEXT CHECK (required_level IS NULL OR required_level IN ('Beginner','Intermediate','Advanced')),
+      required_skills TEXT NOT NULL DEFAULT '[]',
+      deadline INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','closed')),
+      created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE applications (
+      id INTEGER PRIMARY KEY,
+      drive_id INTEGER NOT NULL REFERENCES drives(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      applied_at INTEGER NOT NULL,
+      UNIQUE (drive_id, user_id)
+    );` }
 ];
