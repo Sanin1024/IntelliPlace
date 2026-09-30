@@ -92,5 +92,37 @@ module.exports = [
     ALTER TABLE attempts ADD COLUMN category TEXT;
     ALTER TABLE attempts ADD COLUMN difficulty TEXT;
     CREATE INDEX practice_lookup ON questions(purpose, category, difficulty);
-    CREATE INDEX attempts_user_kind ON attempts(user_id, kind);` }
+    CREATE INDEX attempts_user_kind ON attempts(user_id, kind);` },
+  { id: 6, name: 'mocks_and_companies', sql: `
+    CREATE TABLE companies (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      focus TEXT NOT NULL DEFAULT '[]',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE company_resources (
+      id INTEGER PRIMARY KEY,
+      company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      kind TEXT NOT NULL CHECK (kind IN ('topic','tip','link')),
+      content TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE mock_tests (
+      id INTEGER PRIMARY KEY,
+      title TEXT NOT NULL,
+      company_id INTEGER REFERENCES companies(id) ON DELETE SET NULL,
+      duration_sec INTEGER NOT NULL,
+      created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE mock_test_questions (
+      mock_id INTEGER NOT NULL REFERENCES mock_tests(id) ON DELETE CASCADE,
+      question_id INTEGER NOT NULL REFERENCES questions(id),
+      section TEXT NOT NULL,
+      position INTEGER NOT NULL,
+      PRIMARY KEY (mock_id, question_id)
+    );
+    ALTER TABLE attempts ADD COLUMN mock_id INTEGER REFERENCES mock_tests(id);
+    CREATE UNIQUE INDEX one_active_mock ON attempts(user_id) WHERE kind = 'mock' AND submitted_at IS NULL;` }
 ];
