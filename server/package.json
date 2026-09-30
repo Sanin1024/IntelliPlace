@@ -10,7 +10,7 @@
     "test": "node --test",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "seed": "node src/seed.js"
+    "seed": "node src/seed.js && node src/practiceBank.js"
   },
   "keywords": [],
   "author": "",

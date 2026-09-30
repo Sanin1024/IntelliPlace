@@ -86,5 +86,11 @@ module.exports = [
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       applied_at INTEGER NOT NULL,
       UNIQUE (drive_id, user_id)
-    );` }
+    );` },
+  { id: 5, name: 'practice_bank', sql: `
+    ALTER TABLE questions ADD COLUMN difficulty TEXT NOT NULL DEFAULT 'Beginner';
+    ALTER TABLE attempts ADD COLUMN category TEXT;
+    ALTER TABLE attempts ADD COLUMN difficulty TEXT;
+    CREATE INDEX practice_lookup ON questions(purpose, category, difficulty);
+    CREATE INDEX attempts_user_kind ON attempts(user_id, kind);` }
 ];
