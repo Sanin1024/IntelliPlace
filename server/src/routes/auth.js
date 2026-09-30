@@ -1,5 +1,6 @@
 const express = require('express');
 const { hashPassword, verifyPassword, createSession, requireAuth } = require('../auth');
+const { audit } = require('../audit');
 const DUMMY = hashPassword('dummy-password');
 
 module.exports = function authRoutes(db) {
@@ -18,6 +19,7 @@ module.exports = function authRoutes(db) {
     try {
       const info = db.prepare('insert into users(name, email, password_hash) values(?, ?, ?)')
         .run(name.trim(), e, hashPassword(password));
+      audit(db, { actorId: Number(info.lastInsertRowid), action: 'user.register', entity: 'user', entityId: info.lastInsertRowid });
       res.status(201).json({ id: Number(info.lastInsertRowid), name: name.trim(), email: e, role: 'student' });
     } catch (err) {
       if (String(err.code).startsWith('SQLITE_CONSTRAINT')) return res.status(409).json({ error: 'Email already registered' });
@@ -31,12 +33,17 @@ module.exports = function authRoutes(db) {
       return res.status(400).json({ error: 'Email and password required' });
     const u = db.prepare('select * from users where email = ?').get(email.trim().toLowerCase());
     const ok = verifyPassword(password, u ? u.password_hash : DUMMY);
-    if (!u || !ok) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!u || !ok) {
+      audit(db, { actorId: u ? u.id : null, action: 'auth.login_failed', entity: 'user', entityId: u ? u.id : null });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    audit(db, { actorId: u.id, action: 'auth.login', entity: 'user', entityId: u.id });
     res.json({ token: createSession(db, u.id), user: { id: u.id, name: u.name, email: u.email, role: u.role } });
   });
 
   r.post('/logout', auth, (req, res) => {
     db.prepare('delete from sessions where token_hash = ?').run(req.tokenHash);
+    audit(db, { actorId: req.user.id, action: 'auth.logout', entity: 'user', entityId: req.user.id });
     res.json({ ok: true });
   });
 

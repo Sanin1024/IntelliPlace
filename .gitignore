@@ -4,3 +4,4 @@ node_modules
 dist
 *.db-wal
 *.db-shm
+.freebuff

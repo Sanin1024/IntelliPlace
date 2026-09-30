@@ -46,5 +46,21 @@ module.exports = [
       selected_index INTEGER NOT NULL, saved_at INTEGER NOT NULL,
       PRIMARY KEY (attempt_id, question_id),
       FOREIGN KEY (attempt_id, question_id) REFERENCES attempt_questions(attempt_id, question_id) ON DELETE CASCADE
-    );` }
+    );` },
+  { id: 3, name: 'audit_log', sql: `
+    CREATE TABLE audit_log (
+      id INTEGER PRIMARY KEY,
+      ts INTEGER NOT NULL,
+      actor_id INTEGER,
+      action TEXT NOT NULL,
+      entity TEXT,
+      entity_id TEXT,
+      details TEXT,
+      prev_hash TEXT NOT NULL,
+      hash TEXT NOT NULL UNIQUE
+    );
+    CREATE TRIGGER audit_no_update BEFORE UPDATE ON audit_log
+      BEGIN SELECT RAISE(ABORT, 'audit_log is append-only'); END;
+    CREATE TRIGGER audit_no_delete BEFORE DELETE ON audit_log
+      BEGIN SELECT RAISE(ABORT, 'audit_log is append-only'); END;` }
 ];

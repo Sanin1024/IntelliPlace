@@ -1,5 +1,6 @@
 const express = require('express');
 const { requireAuth, requireRole } = require('../auth');
+const { audit } = require('../audit');
 
 const KIND = 'initial';
 const DURATION_MS = 15 * 60 * 1000;
@@ -61,6 +62,7 @@ module.exports = function studentRoutes(db) {
     const cols = Object.keys(out);
     db.prepare(`update student_profiles set ${cols.map(c => c + ' = ?').join(', ')}, updated_at = CURRENT_TIMESTAMP where user_id = ?`)
       .run(...cols.map(c => out[c]), uid);
+    audit(db, { actorId: uid, action: 'profile.update', entity: 'profile', entityId: uid, details: { fields: cols } });
     res.json(shape(getProfile(uid)));
   });
 
@@ -81,6 +83,7 @@ module.exports = function studentRoutes(db) {
       db.prepare("update student_profiles set level = ?, level_source = 'system_assessment', updated_at = CURRENT_TIMESTAMP where user_id = ?")
         .run(level, a.user_id);
     })();
+    audit(db, { actorId: a.user_id, action: 'assessment.submit', entity: 'attempt', entityId: a.id, details: { score, total, level, auto: Date.now() >= a.deadline } });
     return db.prepare('select * from attempts where id = ?').get(a.id);
   }
 
@@ -125,7 +128,9 @@ module.exports = function studentRoutes(db) {
       const ins = db.prepare('insert into attempt_questions(attempt_id, question_id, position) values(?, ?, ?)');
       ids.forEach((q, i) => ins.run(Number(info.lastInsertRowid), q.id, i + 1));
     })();
-    res.status(201).json(state(getAttempt(uid)));
+    const att = getAttempt(uid);
+    audit(db, { actorId: uid, action: 'assessment.start', entity: 'attempt', entityId: att.id });
+    res.status(201).json(state(att));
   });
 
   r.put('/assessment/initial/answer', (req, res) => {
