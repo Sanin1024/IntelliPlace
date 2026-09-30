@@ -1,0 +1,15 @@
+:root { font-family: system-ui, Arial, sans-serif; color: #1a1a1a; background: #f6f7f9; }
+body { margin: 0; }
+header { display: flex; gap: 12px; align-items: center; padding: 10px 20px; background: #1f3a5f; color: #fff; }
+header .who { margin-left: auto; }
+header .role { text-transform: capitalize; opacity: .8; }
+main { max-width: 720px; margin: 24px auto; padding: 0 16px; }
+.auth form { display: grid; gap: 12px; max-width: 360px; }
+label { display: grid; gap: 4px; font-size: .95rem; }
+input { padding: 8px; font-size: 1rem; }
+button { padding: 8px 14px; font-size: 1rem; cursor: pointer; }
+.error { color: #b00020; }
+.note { color: #555; font-size: .9rem; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+dt { font-weight: 600; }
+dd { margin: 0; }
