@@ -134,11 +134,13 @@ module.exports = function practiceRoutes(db) {
       else rec = `Keep practicing ${c}`;
       by[c] = { sessions: ss.length, answered, correct, accuracy, recommendation: rec };
     }
-    const scored = CATS.filter(c => by[c].accuracy != null);
+    const mk = db.prepare("select score, total from attempts where user_id = ? and kind = 'mock' and submitted_at is not null and total > 0 order by id").all(uid);
+    const mpct = m => Math.round(m.score * 1000 / m.total) / 10;
+    const mockSummary = { attempts: mk.length, best_percent: mk.length ? Math.max(...mk.map(mpct)) : null, latest_percent: mk.length ? mpct(mk[mk.length - 1]) : null };    const scored = CATS.filter(c => by[c].accuracy != null);
     const weakest = scored.length ? scored.reduce((a, b) => (by[b].accuracy < by[a].accuracy ? b : a)) : null;
     res.json({
       verified: { source: 'system_verified', level: lvl, initial_assessment: initial, practice: by,
-        weakest_category: weakest, total_sessions: sessions.length },
+        weakest_category: weakest, total_sessions: sessions.length, mock: mockSummary },
       self_reported: { source: 'self_reported', department: p?.department ?? null, year: p?.year ?? null,
         cgpa: p?.cgpa ?? null, skills: p ? JSON.parse(p.skills) : [] }
     });
