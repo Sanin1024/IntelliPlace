@@ -30,3 +30,7 @@ article.drive { background: #fff; border: 1px solid #ccd; padding: 4px 14px 12px
 .rules { list-style: none; padding: 0; }
 .rules li { padding: 4px 0; }
 .tag { font-size: .8rem; color: #555; margin-left: 6px; }
+main { max-width: 960px; }
+table.data { border-collapse: collapse; width: 100%; background: #fff; }
+table.data th, table.data td { border-bottom: 1px solid #ccd; padding: 6px 8px; text-align: left; vertical-align: top; }
+td button { margin: 2px 4px 2px 0; }

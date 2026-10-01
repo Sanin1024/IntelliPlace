@@ -8,6 +8,10 @@ import { AssessmentPage } from './AssessmentPage';
 import { PracticePage } from './PracticePage';
 import { DrivesPage } from './DrivesPage';
 import { ProfilePage } from './ProfilePage';
+import { StaffDrivesPage } from './StaffDrives';
+import { StaffStudentsPage } from './StaffStudents';
+import { AdminUsersPage } from './AdminUsers';
+import { AdminAuditPage } from './AdminAudit';
 
 const Loading = () => <p role="status">Loading...</p>;
 
@@ -32,19 +36,25 @@ function RequireRole({ role, children }) {
   return children;
 }
 
+const guard = (role, el) => <RequireRole role={role}>{el}</RequireRole>;
+
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Root />} />
       <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
       <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
-      <Route path="/student" element={<RequireRole role="student"><StudentDashboard /></RequireRole>} />
-      <Route path="/student/assessment" element={<RequireRole role="student"><AssessmentPage /></RequireRole>} />
-      <Route path="/student/practice" element={<RequireRole role="student"><PracticePage /></RequireRole>} />
-      <Route path="/student/drives" element={<RequireRole role="student"><DrivesPage /></RequireRole>} />
-      <Route path="/student/profile" element={<RequireRole role="student"><ProfilePage /></RequireRole>} />
-      <Route path="/coordinator" element={<RequireRole role="coordinator"><CoordinatorDashboard /></RequireRole>} />
-      <Route path="/admin" element={<RequireRole role="admin"><AdminDashboard /></RequireRole>} />
+      <Route path="/student" element={guard('student', <StudentDashboard />)} />
+      <Route path="/student/assessment" element={guard('student', <AssessmentPage />)} />
+      <Route path="/student/practice" element={guard('student', <PracticePage />)} />
+      <Route path="/student/drives" element={guard('student', <DrivesPage />)} />
+      <Route path="/student/profile" element={guard('student', <ProfilePage />)} />
+      <Route path="/coordinator" element={guard('coordinator', <CoordinatorDashboard />)} />
+      <Route path="/coordinator/drives" element={guard('coordinator', <StaffDrivesPage />)} />
+      <Route path="/coordinator/students" element={guard('coordinator', <StaffStudentsPage />)} />
+      <Route path="/admin" element={guard('admin', <AdminDashboard />)} />
+      <Route path="/admin/users" element={guard('admin', <AdminUsersPage />)} />
+      <Route path="/admin/audit" element={guard('admin', <AdminAuditPage />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
