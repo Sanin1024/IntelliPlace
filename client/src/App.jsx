@@ -6,6 +6,8 @@ import { Register } from './Register';
 import { StudentDashboard, CoordinatorDashboard, AdminDashboard } from './Dashboards';
 import { AssessmentPage } from './AssessmentPage';
 import { PracticePage } from './PracticePage';
+import { DrivesPage } from './DrivesPage';
+import { ProfilePage } from './ProfilePage';
 
 const Loading = () => <p role="status">Loading...</p>;
 
@@ -39,6 +41,8 @@ export function AppRoutes() {
       <Route path="/student" element={<RequireRole role="student"><StudentDashboard /></RequireRole>} />
       <Route path="/student/assessment" element={<RequireRole role="student"><AssessmentPage /></RequireRole>} />
       <Route path="/student/practice" element={<RequireRole role="student"><PracticePage /></RequireRole>} />
+      <Route path="/student/drives" element={<RequireRole role="student"><DrivesPage /></RequireRole>} />
+      <Route path="/student/profile" element={<RequireRole role="student"><ProfilePage /></RequireRole>} />
       <Route path="/coordinator" element={<RequireRole role="coordinator"><CoordinatorDashboard /></RequireRole>} />
       <Route path="/admin" element={<RequireRole role="admin"><AdminDashboard /></RequireRole>} />
       <Route path="*" element={<Navigate to="/" replace />} />

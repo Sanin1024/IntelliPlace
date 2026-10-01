@@ -25,3 +25,8 @@ legend { font-weight: 600; }
 .bad { color: #b00020; }
 select { padding: 8px; font-size: 1rem; }
 section label { margin: 8px 0; max-width: 260px; }
+article.drive { background: #fff; border: 1px solid #ccd; padding: 4px 14px 12px; margin-bottom: 16px; }
+.badge { font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #e8eef7; }
+.rules { list-style: none; padding: 0; }
+.rules li { padding: 4px 0; }
+.tag { font-size: .8rem; color: #555; margin-left: 6px; }

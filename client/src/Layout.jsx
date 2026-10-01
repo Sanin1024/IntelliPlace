@@ -14,6 +14,8 @@ export function Shell({ title, children }) {
             <NavLink to="/student" end>Dashboard</NavLink>
             <NavLink to="/student/assessment">Assessment</NavLink>
             <NavLink to="/student/practice">Practice</NavLink>
+            <NavLink to="/student/drives">Drives</NavLink>
+            <NavLink to="/student/profile">Profile</NavLink>
           </nav>
         )}
         <span className="who">{user.name}</span>
