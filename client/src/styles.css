@@ -13,3 +13,15 @@ button { padding: 8px 14px; font-size: 1rem; cursor: pointer; }
 dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
 dt { font-weight: 600; }
 dd { margin: 0; }
+header nav { display: flex; gap: 12px; margin-left: 16px; }
+header nav a { color: #fff; text-decoration: none; opacity: .8; }
+header nav a.active { opacity: 1; text-decoration: underline; }
+fieldset { margin: 0 0 16px; padding: 10px 14px; border: 1px solid #ccd; background: #fff; }
+legend { font-weight: 600; }
+.opt { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
+.runner-bar { position: sticky; top: 0; display: flex; gap: 16px; padding: 8px 0; background: #f6f7f9; }
+.warn { color: #b00020; font-weight: 700; }
+.ok { color: #1b5e20; font-weight: 600; }
+.bad { color: #b00020; }
+select { padding: 8px; font-size: 1rem; }
+section label { margin: 8px 0; max-width: 260px; }

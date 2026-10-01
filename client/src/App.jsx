@@ -4,6 +4,8 @@ import { HOME } from './roles';
 import { Login } from './Login';
 import { Register } from './Register';
 import { StudentDashboard, CoordinatorDashboard, AdminDashboard } from './Dashboards';
+import { AssessmentPage } from './AssessmentPage';
+import { PracticePage } from './PracticePage';
 
 const Loading = () => <p role="status">Loading...</p>;
 
@@ -35,6 +37,8 @@ export function AppRoutes() {
       <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
       <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
       <Route path="/student" element={<RequireRole role="student"><StudentDashboard /></RequireRole>} />
+      <Route path="/student/assessment" element={<RequireRole role="student"><AssessmentPage /></RequireRole>} />
+      <Route path="/student/practice" element={<RequireRole role="student"><PracticePage /></RequireRole>} />
       <Route path="/coordinator" element={<RequireRole role="coordinator"><CoordinatorDashboard /></RequireRole>} />
       <Route path="/admin" element={<RequireRole role="admin"><AdminDashboard /></RequireRole>} />
       <Route path="*" element={<Navigate to="/" replace />} />

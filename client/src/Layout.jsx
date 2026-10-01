@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 export function Shell({ title, children }) {
@@ -8,6 +9,13 @@ export function Shell({ title, children }) {
     <div className="shell">
       <header>
         <strong>IntelliPlace</strong>
+        {user.role === 'student' && (
+          <nav aria-label="Student">
+            <NavLink to="/student" end>Dashboard</NavLink>
+            <NavLink to="/student/assessment">Assessment</NavLink>
+            <NavLink to="/student/practice">Practice</NavLink>
+          </nav>
+        )}
         <span className="who">{user.name}</span>
         <span className="role">{user.role}</span>
         <button type="button" disabled={busy} onClick={async () => { setBusy(true); await logout(); }}>Sign out</button>
