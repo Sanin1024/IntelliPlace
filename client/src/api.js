@@ -17,7 +17,7 @@ export class ApiError extends Error {
 let onUnauthorized = () => {};
 export const setUnauthorizedHandler = fn => { onUnauthorized = fn; };
 
-export async function api(path, { method = 'GET', body, auth = true } = {}) {
+export async function api(path, { method = 'GET', body, auth = true, raw = false } = {}) {
   const headers = {};
   if (body !== undefined) headers['content-type'] = 'application/json';
   const token = tokenStore.get();
@@ -35,5 +35,5 @@ export async function api(path, { method = 'GET', body, auth = true } = {}) {
     if (res.status === 401 && auth && token) onUnauthorized();
     throw new ApiError(res.status, (data && data.error) || `Request failed (${res.status})`, data);
   }
-  return data;
+  return raw ? text : data;
 }

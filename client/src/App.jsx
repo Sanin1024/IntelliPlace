@@ -14,6 +14,8 @@ import { AdminUsersPage } from './AdminUsers';
 import { AdminAuditPage } from './AdminAudit';
 import { MocksPage } from './MocksPage';
 import { RecommendationsPage } from './RecommendationsPage';
+import { ResumePage } from './ResumePage';
+import { CompaniesPage, CompanyPrepPage } from './CompanyPages';
 
 const Loading = () => <p role="status">Loading...</p>;
 
@@ -59,6 +61,9 @@ export function AppRoutes() {
       <Route path="/admin/audit" element={guard('admin', <AdminAuditPage />)} />
             <Route path="/student/mocks" element={guard('student', <MocksPage />)} />
       <Route path="/student/recommendations" element={guard('student', <RecommendationsPage />)} />
+            <Route path="/student/resume" element={guard('student', <ResumePage />)} />
+      <Route path="/student/companies" element={guard('student', <CompaniesPage />)} />
+      <Route path="/student/companies/:id" element={guard('student', <CompanyPrepPage />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
