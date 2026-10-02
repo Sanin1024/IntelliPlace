@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 const NAV = {
-  student: [['/student', 'Dashboard', true], ['/student/assessment', 'Assessment'], ['/student/practice', 'Practice'], ['/student/drives', 'Drives'], ['/student/profile', 'Profile']],
+  student: [['/student', 'Dashboard', true], ['/student/assessment', 'Assessment'], ['/student/practice', 'Practice'], ['/student/drives', 'Drives'], ['/student/profile', 'Profile'], ['/student/mocks', 'Mock tests'], ['/student/recommendations', 'Recommendations']],
   coordinator: [['/coordinator', 'Dashboard', true], ['/coordinator/drives', 'Manage drives'], ['/coordinator/students', 'Students']],
   admin: [['/admin', 'Dashboard', true], ['/admin/users', 'Users'], ['/admin/audit', 'Audit log']]
 };
