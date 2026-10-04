@@ -35,4 +35,23 @@ function verifyChain(db) {
   }
   return { valid: true, count, head: prev };
 }
-module.exports = { audit, verifyChain, digest, GENESIS };
+
+function currentHead(db) {
+  const row = db.prepare('select count(*) n, max(id) maxid from audit_log').get();
+  const last = row.n ? db.prepare('select hash from audit_log order by id desc limit 1').get() : null;
+  return { count: row.n, head: last ? last.hash : GENESIS };
+}
+
+function checkAgainstHead(db, saved) {
+  const cur = verifyChain(db);
+  if (!cur.valid) return { result: 'diverged', message: `The audit chain is broken at entry ${cur.broken_at} (${cur.reason}).`, current: { count: cur.count } };
+  if (cur.count < saved.count) {
+    return { result: 'truncated', message: `Your saved head had ${saved.count} entries but the log now has ${cur.count}. Entries were removed from the end.`, current: { count: cur.count, head: cur.head } };
+  }
+  const at = saved.count === 0 ? { hash: GENESIS } : db.prepare('select hash from audit_log order by id limit 1 offset ?').get(saved.count - 1);
+  if (!at || at.hash !== saved.head) {
+    return { result: 'diverged', message: 'The entry at your saved position does not match your saved head. The log was changed or rebuilt.', current: { count: cur.count, head: cur.head } };
+  }
+  return { result: 'matches', message: `The log is consistent with your saved head. ${cur.count - saved.count} entries were added since.`, current: { count: cur.count, head: cur.head } };
+}
+module.exports = { audit, verifyChain, digest, GENESIS, currentHead, checkAgainstHead };

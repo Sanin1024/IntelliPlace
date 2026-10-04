@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Shell } from './Layout';
 import { api } from './api';
 
@@ -10,6 +10,10 @@ export function AdminAuditPage() {
   const [rows, setRows] = useState(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [headMsg, setHeadMsg] = useState('');
+  const [headError, setHeadError] = useState('');
+  const [check, setCheck] = useState(null);
+  const fileRef = useRef(null);
 
   useEffect(() => {
     let live = true;
@@ -24,6 +28,46 @@ export function AdminAuditPage() {
     try { setVer(await api('/admin/audit/verify')); }
     catch (e) { setVerError(e.message); }
     finally { setBusy(false); }
+  }
+
+  async function exportHead() {
+    setHeadError('');
+    setHeadMsg('');
+    setCheck(null);
+    try {
+      const h = await api('/admin/audit/head');
+      const blob = new Blob([JSON.stringify(h, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `audit-head-${h.count}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setHeadMsg(`Saved audit head for ${h.count} entries. Keep this file somewhere separate from the server.`);
+    } catch (e) {
+      setHeadError(e.message);
+    }
+  }
+
+  async function checkHead(e) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    setHeadError('');
+    setHeadMsg('');
+    setCheck(null);
+    let saved;
+    try {
+      saved = JSON.parse(await file.text());
+    } catch {
+      setHeadError('That file is not a valid saved audit head.');
+      return;
+    }
+    try {
+      setCheck(await api('/admin/audit/check-head', { method: 'POST', body: { count: saved.count, head: saved.head } }));
+    } catch (err) {
+      setHeadError(err.message);
+    }
   }
 
   let list;
@@ -57,6 +101,19 @@ export function AdminAuditPage() {
           ? <p role="status">{`Audit chain valid: ${ver.count} entries verified`}</p>
           : <p role="alert" className="error">{`Audit chain broken at entry ${ver.broken_at} (${ver.reason})`}</p>)}
         <button type="button" onClick={verify} disabled={busy}>Verify again</button>
+      </section>
+      <section>
+        <h2>Saved head</h2>
+        <p className="note">The chain alone cannot show that the newest entries were deleted. Export the head regularly, keep the file somewhere separate from this server, and check the log against it later.</p>
+        <button type="button" onClick={exportHead}>Export head</button>
+        <label>Check against a saved head
+          <input ref={fileRef} type="file" accept="application/json,.json" onChange={checkHead} />
+        </label>
+        {headMsg && <p role="status">{headMsg}</p>}
+        {headError && <p role="alert" className="error">{headError}</p>}
+        {check && (check.result === 'matches'
+          ? <p role="status">{`Consistent: ${check.message}`}</p>
+          : <p role="alert" className="error">{`${check.result === 'truncated' ? 'Truncated' : 'Diverged'}: ${check.message}`}</p>)}
       </section>
       <section>
         <h2>Latest entries</h2>

@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node --test",
+    "test": "node --require ./tests/setup-env.cjs --test",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/seed.js && node src/practiceBank.js && node src/mockBank.js",
